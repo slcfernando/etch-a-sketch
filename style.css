@@ -15,8 +15,12 @@ body, html {
     height: 100%;
 }
 
+header {
+    display: flex;
+}
+
 #grid {
-    border: 1px solid black;
+    border: 1px solid rgb(210, 210, 210);
     display: grid;
     width: 500px;
     height: 500px;
@@ -25,6 +29,6 @@ body, html {
 
 .pixel {
     font-size: 10px;
-    border: 1px solid black;
+    border: 1px solid rgb(210, 210, 210);
     text-align: center;
 }
