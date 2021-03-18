@@ -11,6 +11,7 @@ let canvasMode = "CLASSIC";  // default mode
 
 createCanvas(size);
 addCanvasEventListeners();
+classicButton.disabled = true;
 
 resizeButton.addEventListener("click", () => {
     do {
@@ -49,7 +50,6 @@ function createCanvas(sideLength) {
     }
     pixels = document.querySelectorAll(".pixel");
     grid.style.gridTemplate = `repeat(${size}, 1fr) / repeat(${size}, 1fr)`;
-    classicButton.disabled = true;
 }
 
 function deleteCanvas() {
