@@ -10,7 +10,7 @@ let pixels;
 let canvasMode = "CLASSIC";  // default mode
 
 createCanvas(size);
-setCanvasMode("CLASSIC");
+addCanvasEventListeners();
 
 resizeButton.addEventListener("click", () => {
     do {
@@ -25,10 +25,9 @@ resizeButton.addEventListener("click", () => {
     if (size) {
         deleteCanvas();
         createCanvas(size);
-        setCanvasMode("CLASSIC");
+        addCanvasEventListeners();
     }
 })
-
 classicButton.addEventListener("click", () => {
     setCanvasMode("CLASSIC");
 });
@@ -50,66 +49,56 @@ function createCanvas(sideLength) {
     }
     pixels = document.querySelectorAll(".pixel");
     grid.style.gridTemplate = `repeat(${size}, 1fr) / repeat(${size}, 1fr)`;
+    classicButton.disabled = true;
 }
 
 function deleteCanvas() {
     pixels.forEach((pixel) => pixel.remove());
 }
 
+function addCanvasEventListeners() {
+    pixels.forEach((pixel) => {
+        pixel.addEventListener("mouseenter", () => {
+            if (canvasMode == "CLASSIC") {
+                if (pixel.style.backgroundColor == "rgb(255, 255, 255)") {
+                    pixel.style.backgroundColor = "rgb(210, 210, 210)";
+                } else {
+                    pixel.style.backgroundColor = "rgb(255, 255, 255)";
+                }
+            } else if (canvasMode == "RAINBOW") {
+                pixel.style.backgroundColor = `rgb(${Math.floor((Math.random() * 256))}, ${Math.floor((Math.random() * 256))}, ${Math.floor((Math.random() * 256))})`;
+            } else if (canvasMode == "BW") {
+                let rgbLength = pixel.style.backgroundColor.length;
+                let rgbNumbers = pixel.style.backgroundColor.substring(4,rgbLength-1).split(", ");
+                if (rgbNumbers[0] == 3) {  // if the rgb value is (3, 3, 3), it's reached the darkest possible shade
+                    pixel.style.backgroundColor = "rgb(255, 255, 255)";
+                } else {
+                    pixel.style.backgroundColor = `rgb(${rgbNumbers[0]-28}, ${rgbNumbers[1]-28}, ${rgbNumbers[2]-28})`;
+                }
+            }
+        })
+    });
+}
+
 function setCanvasMode(mode) {
-    removeCanvasEventListeners();
     clearCanvas();
     classicButton.disabled = false;
     rainbowButton.disabled = false;
     bwButton.disabled = false;
 
-    if (mode == "CLASSIC") {
-        canvasMode = "CLASSIC";
-        pixels.forEach((pixel) => pixel.addEventListener("mouseenter", setPixelClassicMode));
-        classicButton.disabled = true;
-    } else if (mode == "RAINBOW") {
-        canvasMode = "RAINBOW";
-        pixels.forEach((pixel) => pixel.addEventListener("mouseenter", setPixelRainbowMode));
-        rainbowButton.disabled = true;
-    } else if (mode == "BW") {
-        canvasMode = "BW";
-        pixels.forEach((pixel) => pixel.addEventListener("mouseenter", setPixelBWMode));
-        bwButton.disabled = true;
-    }
-}
-
-function setPixelClassicMode(event) {
-    let pixel = event.target;
-    if (pixel.style.backgroundColor == "rgb(255, 255, 255)") {
-        pixel.style.backgroundColor = "rgb(210, 210, 210)";
-    } else {
-        pixel.style.backgroundColor = "rgb(255, 255, 255)";
-    }
-}
-
-function setPixelRainbowMode(event) {
-    let pixel = event.target;
-    pixel.style.backgroundColor = `rgb(${Math.floor((Math.random() * 256))}, ${Math.floor((Math.random() * 256))}, ${Math.floor((Math.random() * 256))})`;
-}
-
-function setPixelBWMode(event) {
-    let pixel = event.target;
-    let rgbLength = pixel.style.backgroundColor.length;
-    let rgbNumbers = pixel.style.backgroundColor.substring(4,rgbLength-1).split(", ");
-    if (rgbNumbers[0] == 3) {  // if the rgb value is (3, 3, 3), it's reached the darkest possible shade
-        pixel.style.backgroundColor = "rgb(255, 255, 255)";
-    } else {
-        pixel.style.backgroundColor = `rgb(${rgbNumbers[0]-28}, ${rgbNumbers[1]-28}, ${rgbNumbers[2]-28})`;
-    }
-}
-
-function removeCanvasEventListeners() {
-    if (canvasMode == "CLASSIC") {
-        pixels.forEach((pixel) => pixel.removeEventListener("mouseenter", setPixelClassicMode));
-    } else if (canvasMode == "RAINBOW") {
-        pixels.forEach((pixel) => pixel.removeEventListener("mouseenter", setPixelRainbowMode));
-    } else if (canvasMode == "BW") {
-        pixels.forEach((pixel) => pixel.removeEventListener("mouseenter", setPixelBWMode));
+    switch (mode) {
+        case "CLASSIC":
+            canvasMode = "CLASSIC";
+            classicButton.disabled = true;
+            break;
+        case "RAINBOW":
+            canvasMode = "RAINBOW";
+            rainbowButton.disabled = true;
+            break;
+        case "BW":
+            canvasMode = "BW";
+            bwButton.disabled = true;
+            break;
     }
 }
 
